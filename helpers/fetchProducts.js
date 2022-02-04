@@ -1,9 +1,13 @@
 const fetchProducts = async (query) => {
-  const url = `https://api.mercadolibre.com/sites/MLB/search?q=${query}`;
-  const result = await fetch(url);
-  const data = await result.json();
-
-  return data;
+  try {
+    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${query}`;
+    const result = await fetch(url);
+    const data = await result.json();
+  
+    return data;
+  } catch (error) {
+    return error;
+  }
 };
 
 if (typeof module !== 'undefined') {

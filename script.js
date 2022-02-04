@@ -40,41 +40,48 @@ function createCartItemElement({ sku, name, salePrice }) {
   return li;
 }
 
-function addClick(event) {
-  console.log(event.target);
-  const itemID = event.target.document.querySelector('.item__sku').innerHTML;
-  return itemID;
-}
-
-window.onload = () => {
-  fetchProducts();
-  fetchItem();
+const productsADD = async () => {
+  const addComputers = await fetchProducts('computador');
+  addComputers.results.forEach((elem) => {
+    const resultado = {
+      sku: elem.id,
+      name: elem.title,
+      image: elem.thumbnail,
+    };
+    const products = document.querySelector('.items');
+    products.appendChild(createProductItemElement(resultado));
+  });
 };
+ // req 2
+ const addCart = async (itemAdd) => {
+   const getData = await fetchItem(itemAdd);
+   const itemResult = { sku: getData.id, name: getData.title, salePrice: getData.price };
+   const cartItems = document.querySelector('.cart__items');
+   cartItems.appendChild(createCartItemElement(itemResult));
+ };
+ 
+ const getSkuBtn = async () => {
+   const itemsBtn = document.querySelectorAll('.item__add');
+  console.log(itemsBtn);
+   itemsBtn.forEach((element) => element.addEventListener('click', (event) => {
+     const ITEM = event.target.parentElement;
+     const itemSku = ITEM.querySelector('span.item__sku').innerText;
+     addCart(itemSku);
+     console.log(itemSku);
+   }));
+ };
 
-const itemsBtn = document.querySelectorAll('.item__add');
-itemsBtn.forEach((element) => element.addEventListener('click', addClick));
-console.log(itemsBtn);
-
-fetchProducts('computador').then((elements) => {
-  elements.results.forEach((elem) => {
-      const resultado = {
-        sku: elem.id,
-        name: elem.title,
-        image: elem.thumbnail,
-      };
-      console.log(resultado);
-
-      const products = document.querySelector('.items');
-      products.appendChild(createProductItemElement(resultado));
-    });
-});
-
-// button
-
-fetchItem('MLB1341706310').then((element) => {
+/* fetchItem().then((element) => {
   console.log(element);
   const itemResult = { sku: element.id, name: element.title, salePrice: element.price };
 
   const cartItems = document.querySelector('.cart__items');
   cartItems.appendChild(createCartItemElement(itemResult));
 });
+ */
+window.onload = async () => {
+  await fetchProducts();
+  await productsADD();
+  await getSkuBtn();
+  await fetchItem();
+};
